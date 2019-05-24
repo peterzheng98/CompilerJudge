@@ -1,0 +1,17 @@
+{
+  "database":{
+    "name": "acmclass",
+    "pwd": "123456",
+    "type": "SQLite",
+    "filename": "core.db"
+  },
+  "host": {
+    "address": "123.100.100.100",
+    "port": 10280
+  },
+  "update": {
+    "freq": 1,
+    "time": [12]
+  },
+  "thread_count" : 3
+}

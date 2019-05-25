@@ -11,8 +11,6 @@ namespace compilerBackend {
 /*
  * Init the Judge
  * Requirements: mysql database connection(SQLite3)
- * Host server name and port
- * Update Strategy
  * Maximum thread count
  */
 
@@ -21,9 +19,9 @@ namespace compilerBackend {
  */
 class init {
  private:
-  static Json::Reader jsonReader;
+  Json::Reader jsonReader;
   Json::Value jsonRoot;
-  std::string fileName, targetName;
+  std::string fileName;
   struct DBInfo {
     std::string name, pwd, type, dbfile;
     int typeID = 0;
@@ -33,7 +31,9 @@ class init {
   int targetThread;
 
  public:
-  init(const std::string &fileName, const std::string &targetName);
+  init(const std::string &fileName);
+  init() = default;
+  void setFileName(const std::string &fileName);
 
   void run();
   static int callback(void *NotUsed, int argc, char **argv, char **azColName) {

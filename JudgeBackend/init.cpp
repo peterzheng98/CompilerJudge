@@ -10,13 +10,12 @@
 #include "Utility.h"
 
 namespace compilerBackend {
-init::init(const std::string &fileName, const std::string &targetName)
-    : fileName(fileName), targetName(targetName) {}
+init::init(const std::string& fileName) : fileName(fileName) {}
 
 void init::run() {
   std::ifstream _fileIn;
-  _fileIn.open(fileName, std::ios::in);
-  std::cerr << "> Info:\t Open file" + fileName + "\n";
+  _fileIn.open(fileName, std::ios::binary);
+  std::cerr << "> Info:\t Open file[" + fileName + "]\n";
   if (jsonReader.parse(_fileIn, jsonRoot, false)) {
     // Check the config file have the module
     std::string command[] = {"database", "host", "update", "thread_count"};
@@ -58,31 +57,37 @@ void init::run() {
                           std::string(sqlite3_errmsg(dbInfo.db)));
       std::string sql =
           "CREATE TABLE ServerSync("
-          "ID INT PRIMARY KEY     NOT NULL auto_increment,"
+          "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
           "SHA CHAR(40) NOT NULL,"
           "CRC CHAR(16) NOT NULL,"
           "TIME CHAR(30) NOT NULL,"
           "LOG TEXT NOT NULL);";
       char* errmsg = 0;
-      return_code = sqlite3_exec(dbInfo.db, sql.c_str(), init::callback, 0, &errmsg);
-      if(return_code != SQLITE_OK){
+      return_code =
+          sqlite3_exec(dbInfo.db, sql.c_str(), init::callback, 0, &errmsg);
+      if (return_code != SQLITE_OK) {
         std::cerr << "! Error:\t SQL error: " << errmsg << "\n";
         sqlite3_free(errmsg);
+        sqlite3_close(dbInfo.db);
         throw myException("SQL Error!");
       }
       std::cerr << "> Info:\t Table[Server Sync] Create Success!\n";
-      sql = "CREATE TABLE UserRepo("
-            "ID INT PRIMARY KEY NOT NULL auto_increment,"
-            "Name CHAR(255) NOT NULL,"
-            "TIME CHAR(30) NOT NULL,"
-            "SHA CHAR(40) NOT NULL,"
-            "LOG TEXT NOT NULL,"
-            "Status INT NOT NULL);";
+      sql =
+          "CREATE TABLE UserRepo("
+          "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+          "Name CHAR(255) NOT NULL,"
+          "TIME CHAR(30) NOT NULL,"
+          "SHA CHAR(40) NOT NULL,"
+          "LOG TEXT NOT NULL,"
+          "ADDRESS TEXT NOT NULL,"
+          "Status INT NOT NULL);";
       char* errmsg2 = 0;
-      return_code = sqlite3_exec(dbInfo.db, sql.c_str(), init::callback, 0, &errmsg2);\
-      if(return_code != SQLITE_OK){
+      return_code =
+          sqlite3_exec(dbInfo.db, sql.c_str(), init::callback, 0, &errmsg2);
+      if (return_code != SQLITE_OK) {
         std::cerr << "! Error:\t SQL error: " << errmsg2 << "\n";
         sqlite3_free(errmsg2);
+        sqlite3_close(dbInfo.db);
         throw myException("SQL Error!");
       }
       std::cerr << "> Info:\t Table[User Git Data] Create Success!\n";
@@ -90,6 +95,11 @@ void init::run() {
       std::cerr << "> Info:\t SQLite Closed success!\n";
     }
     // No Support for other databases
-  }
+  } else throw myException("JSON File cannot be opened.");
+  _fileIn.close();
+}
+
+void init::setFileName(const std::string& fileName) {
+  init::fileName = fileName;
 }
 }  // namespace compilerBackend

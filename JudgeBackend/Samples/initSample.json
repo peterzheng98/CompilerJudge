@@ -13,5 +13,6 @@
     "freq": 1,
     "time": [12]
   },
-  "thread_count" : 3
+  "thread_count" : 3,
+  "server_name": "Test"
 }

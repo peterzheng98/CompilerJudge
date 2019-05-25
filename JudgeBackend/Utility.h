@@ -4,7 +4,8 @@
 
 #ifndef JUDGEBACKEND_UTILITY_H
 #define JUDGEBACKEND_UTILITY_H
-
+#define VERSION 1.0
+#define BUILD_VERSION 1001
 #include <iostream>
 #include <string>
 #include <vector>

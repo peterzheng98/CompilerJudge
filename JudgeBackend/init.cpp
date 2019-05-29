@@ -72,6 +72,8 @@ void init::run() {
         throw myException("SQL Error!");
       }
       std::cerr << "> Info:\t Table[Server Sync] Create Success!\n";
+
+
       sql =
           "CREATE TABLE UserRepo("
           "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -91,6 +93,28 @@ void init::run() {
         throw myException("SQL Error!");
       }
       std::cerr << "> Info:\t Table[User Git Data] Create Success!\n";
+
+
+      sql =
+          "CREATE TABLE RunLog("
+          "ID INTEGER PRIMARY KEY AUTOINCREMENT,"
+          "UserName CHAR(255) NOT NULL,"
+          "TIME CHAR(30) NOT NULL,"
+          "RunID CHAR(40) NOT NULL,"
+          "Log CHAR(8192) NOT NULL,"
+          "Phase INT NOT NULL,"
+          "Verdict INT NOT NULL);";
+      char* errmsg3 = 0;
+      return_code =
+          sqlite3_exec(dbInfo.db, sql.c_str(), init::callback, 0, &errmsg3);
+      if (return_code != SQLITE_OK) {
+        std::cerr << "! Error:\t SQL error: " << errmsg3 << "\n";
+        sqlite3_free(errmsg3);
+        sqlite3_close(dbInfo.db);
+        throw myException("SQL Error!");
+      }
+      std::cerr << "> Info:\t Table[User Running Data] Create Success!\n";
+
       sqlite3_close(dbInfo.db);
       std::cerr << "> Info:\t SQLite Closed success!\n";
     }

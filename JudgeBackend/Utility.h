@@ -4,11 +4,13 @@
 
 #ifndef JUDGEBACKEND_UTILITY_H
 #define JUDGEBACKEND_UTILITY_H
-#define VERSION 1.0
-#define BUILD_VERSION 1001
 #include <iostream>
 #include <string>
 #include <vector>
+#include "Macros.h"
+
+
+
 
 namespace compilerBackend {
 class myException : std::exception {
@@ -22,7 +24,7 @@ class myException : std::exception {
 
   ~myException() override {}
 
-  const char *what() const noexcept { return mess.c_str(); }
+  const char *what() const noexcept override { return mess.c_str(); }
 };
 
 class IPAddress {
@@ -95,6 +97,15 @@ class IPAddress {
            std::to_string(d3) + "." + std::to_string(d4);
   }
 };
+
+// Some useful function here:
+uint64_t toUint64_t(const std::string& rhs){
+    uint64_t ret = 0;
+    short limit = rhs.length();
+    for(int i = 0;i < limit; ++i)
+        ret = ret * 10 + rhs[i] - '0';
+    return ret;
+}
 }  // namespace compilerBackend
 
 
